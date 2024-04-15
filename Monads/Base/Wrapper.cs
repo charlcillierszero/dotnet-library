@@ -1,15 +1,14 @@
-﻿namespace Monads.Base
+﻿namespace Monads.Base;
+
+public sealed class Wrapper<T>(T item)
 {
-    public class Wrapper<T>(T item)
-    {
-        public T Item { get; } = item;
-    }
+    public T Item { get; } = item;
+}
 
-    public static class WrapperExtention
-    {
-        public static Wrapper<T> Wrap<T>(this T item) => new(item);
+public static class WrapperExtention
+{
+    public static Wrapper<T> Wrap<T>(this T item) => new(item);
 
-        public static Wrapper<U> Execute<T, U>(this Wrapper<T> wrapped, Func<T, U> transform)
-            => transform(wrapped.Item).Wrap();
-    }
+    public static Wrapper<U> Execute<T, U>(this Wrapper<T> wrapped, Func<T, U> transform)
+        => transform(wrapped.Item).Wrap();
 }
