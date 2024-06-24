@@ -4,24 +4,23 @@ public sealed class PromiseExample
 {
     public static void RunExample()
     {
-        var task = WaitTotalSecondsAsync(0);
-        var task2 = task
+        var promise = WaitTotalSecondsAsync(1)
             .MakePromise()
+            .Next(data => WaitTotalSecondsAsync(++data))
             .Next(WaitTotalSecondsAsync)
-            .Next(WaitTotalSecondsAsync)
-            .Next(WaitTotalSecondsAsync);
+            .Next(data => WaitTotalSecondsAsync(data + 2));
 
         Console.WriteLine("Starting counting...");
 
-        task2.Task.Wait();
-        Console.WriteLine(task2.Task.Result);
+        promise.Task.Wait();
+
+        Console.WriteLine(promise.Task.Result);
     }
 
-    private static Task<int> WaitTotalSecondsAsync(int seconds = 0)
+    private static async Task<int> WaitTotalSecondsAsync(int seconds = 0)
     {
-        seconds++;
-        Task.Delay(seconds * 1_000).Wait();
+        await Task.Delay(seconds * 1_000);
         Console.WriteLine($"Waited {seconds} seconds.");
-        return Task.FromResult(seconds);
+        return seconds;
     }
 }
